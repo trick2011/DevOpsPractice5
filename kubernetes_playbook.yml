@@ -19,3 +19,54 @@
           state: present
       - name: Install kubelet, kubeadm, kubernetes-cni
         apt: name=kubelet,kubeadm,kubernetes-cni state=latest
+  - hosts: k8master
+    become: true
+    gather_facts: False
+    tasks:
+      - name: Kubeadm init
+        ansible.builtin.shell: kubeadm init
+      - name: Create .kube in $HOME
+        ansible.builtin.file:
+          path: $HOME/.kube/
+          state: directory
+          mode: '0755'
+      - name: Copy /etc/config to home/.kube
+        become: true
+        ansible.builtin.copy:
+          src: /etc/kubernetes/admin.conf
+          dest: /home/ubuntu/.kube/config
+          owner: {{ansible_ssh_user}}
+          group: {{ansible_ssh_user}}
+          mode: '0644'
+      - ansible.posix.sysctl: Set bridge nf call iptables to 1
+        name: net.bridge.bridge-nf-call-iptables
+        value: '1'
+        state: present
+      - name: Install Weave Net addon
+        ansible.builtin.shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+      - name: Muster schedule pods
+        ansible.builtin.shell: kubectl taint nodes --all node-role.kubernetes.io/master-
+      - name: Print join command
+        ansible.builtin.shell: kubeadm token create --print-join-command
+        register: join_command
+      - name: Add join command to dummy host
+        add_host:
+          name: "command_output_holder"
+          join_token: "{{join_command.stdout}}"
+  - hosts: worker
+      become: true
+      gather_facts: False
+      tasks:
+        - name: Execute join
+          ansible.builtin.shell: {{ hostvars['command_output_holder']['join_command'] }}
+  - hosts: k8master
+    become: true
+    gather_facts: False
+    tasks:
+      - name: Kubeadm get nodes
+        ansible.builtin.shell: kubectl get nodes
+        register: get_nodes
+      - name: Print result of get nodes
+        ansible.builtin.debug:
+          msg: {{get_nodes}}
+#
