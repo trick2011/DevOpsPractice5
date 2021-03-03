@@ -19,32 +19,59 @@
           state: present
       - name: Install kubelet, kubeadm, kubernetes-cni
         apt: name=kubelet,kubeadm,kubernetes-cni state=latest
+      - name: Install docker
+        apt: name=containerd state=latest
+      - name: Force enable docker
+        ansible.builtin.shell: systemctl enable docker.service
   - hosts: k8master
     become: true
     gather_facts: False
     tasks:
+      - name: Enable docker
+        ansible.builtin.shell: systemctl enable docker.service
+      - name: Enable br_netfilter module
+        ansible.builtin.shell: modprobe br_netfilter
+      - name: Set up network bridge
+        ansible.posix.sysctl:
+          name: net.bridge.bridge-nf-call-iptables
+          value: '1'
+      - name: Set up network bridge
+        ansible.posix.sysctl:
+          name: net.ipv4.ip_forward
+          value: '1'
+      - name: Reset kubeadm
+        ansible.builtin.shell: kubeadm reset --force
       - name: Kubeadm init
         ansible.builtin.shell: kubeadm init
       - name: Create .kube in $HOME
         ansible.builtin.file:
-          path: $HOME/.kube/
+          path: /home/{{ansible_ssh_user}}/.kube/
           state: directory
+          owner: "ubuntu"
+          group: "ubuntu"
           mode: '0755'
       - name: Copy /etc/config to home/.kube
         become: true
         ansible.builtin.copy:
+          remote_src: true
           src: /etc/kubernetes/admin.conf
           dest: /home/ubuntu/.kube/config
-          owner: {{ansible_ssh_user}}
-          group: {{ansible_ssh_user}}
+          owner: "ubuntu"
+          group: "ubuntu"
           mode: '0644'
-      - ansible.posix.sysctl: Set bridge nf call iptables to 1
-        name: net.bridge.bridge-nf-call-iptables
-        value: '1'
-        state: present
+      - ansible.posix.sysctl:
+          name: net.bridge.bridge-nf-call-iptables
+          value: '1'
+          state: present
+
       - name: Install Weave Net addon
-        ansible.builtin.shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+        become: true
+        become_user: "{{ansible_ssh_user}}"
+        ansible.builtin.shell:
+          kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
       - name: Muster schedule pods
+        become: true
+        become_user: "{{ansible_ssh_user}}"
         ansible.builtin.shell: kubectl taint nodes --all node-role.kubernetes.io/master-
       - name: Print join command
         ansible.builtin.shell: kubeadm token create --print-join-command
@@ -52,21 +79,25 @@
       - name: Add join command to dummy host
         add_host:
           name: "command_output_holder"
-          join_token: "{{join_command.stdout}}"
+          join_command: "{{join_command.stdout}}"
+
   - hosts: worker
-      become: true
-      gather_facts: False
-      tasks:
-        - name: Execute join
-          ansible.builtin.shell: {{ hostvars['command_output_holder']['join_command'] }}
+    become: true
+    gather_facts: False
+    tasks:
+      - name: Force reset kube
+        ansible.builtin.shell: kubeadm reset --force
+      - name: Execute join
+        ansible.builtin.shell: "{{ hostvars['command_output_holder']['join_command'] }}"
   - hosts: k8master
     become: true
     gather_facts: False
     tasks:
       - name: Kubeadm get nodes
+        become_user: "{{ansible_ssh_user}}"
         ansible.builtin.shell: kubectl get nodes
         register: get_nodes
       - name: Print result of get nodes
         ansible.builtin.debug:
-          msg: {{get_nodes}}
+          msg: "{{get_nodes}}"
 #

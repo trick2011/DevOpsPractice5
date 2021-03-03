@@ -10,3 +10,35 @@
   task:
     - name: Install x
       apt: name=x state=latest
+
+
+- name: Enable br_netfilter module
+   shell: modprobe br_netfilter
+
+ - name: Set up network bridge
+   ansible.posix.sysctl:
+     name: net.bridge.bridge-nf-call-iptables
+     value: '1'
+
+ - name: Set up network bridge
+   ansible.posix.sysctl:
+     name: net.ipv4.ip_forward
+     value: '1'
+
+ - name: Reset kubeadm
+   shell: kubeadm reset --force
+
+ - name: Init kubeadm
+   shell: kubeadm init
+
+
+   ---
+   - hosts: k8s_master
+     tasks:
+       - name: Kubernetes Metrics Server
+         shell: kubectl apply -f https://gist.githubusercontent.com/r-whites/ac8464d7422768bbae96db1f2cd59490/raw/d0aab539844b24a0f954ed4fd78476c83f99b241/components.yaml
+
+
+
+
+systemctl enable docker.service
