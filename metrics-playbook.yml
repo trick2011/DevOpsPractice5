@@ -1,0 +1,5 @@
+---
+- hosts: k8master
+  tasks:
+   - name: Kubernetes Metrics Server
+     shell: kubectl apply -f https://gist.githubusercontent.com/r-whites/ac8464d7422768bbae96db1f2cd59490/raw/d0aab539844b24a0f954ed4fd78476c83f99b241/components.yaml

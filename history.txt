@@ -1,0 +1,107 @@
+1  ls /etc/kubernetes/admin.conf
+2  ls -all /etc/kubernetes/admin.conf
+3  ls .kube
+4  pwd
+5  ls -al
+6  exit
+7  cat /etc/kubernetes/admin.conf
+8  sudo cat /etc/kubernetes/admin.conf
+9  exit
+10  ls -all
+11  cat .kube/config
+12  ls /root/
+13  sudo ls -all /root/
+14  sudo ls -all /root/.ku
+15  sudo ls -all /root/.kube
+16  exit
+17  ls -all .kube/
+18  cat .kube/config
+19  $(kubectl version | base64 | tr -d '\\n')
+20  cubectl config view
+21  kubectl config view
+22  sudo kubectl config view
+23  ls -all .kub
+24  ls -all .kube
+25  echo https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')
+26  kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+27  sudo kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+28  exit
+29  kubectl config view
+30  "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+31  kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+32  echo $/
+33  kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+34  echo $?
+35  exit
+36  kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+37  echo $?
+38  sudo su
+39  exit
+40  sudo su
+41  exit
+42  kubeadm token create --print-join-command
+43  exit
+44  kubectl top nodes
+45  kubectl -n kube-system top pods
+46  kubectl run nginx --image nginx
+47  kubectl expose deploy nginx --port 80 --type NodePort
+48  kubectl run nginx --image nginx
+49  kubectl expose deploy nginx --port 80 --type NodePort
+50  kubectl create deployment nginx --image nginx
+51  kubectl expose deploy nginx --port 80 --type NodePort
+52  kubectl get all
+53  kubectl top nodes
+54  kubectl get all
+55  kubectl top nodes
+56  kubectl -n kube-system top pods
+57  sudo apt install apache2-utils
+58  MATER-IP
+59  ab -n 50000 -r -c 500 http://10.104.62.83:31145/
+60  ab -n 50000 -r -c 500 http://ec2-34-239-119-223.compute-1.amazonaws.com:31145/
+61  kubectl autoscale deployment.apps/nginx --cpu-percent=10 --min=1 --max=5
+62  ubuntu@ip-172-31-93-182:~$ ab -n 50000 -r -c 500 http://ec2-34-239-119-223.compute-1.amazonaws.com:31145/
+63  This is ApacheBench, Version 2.3 <$Revision: 1807734 $>
+64  Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+65  Licensed to The Apache Software Foundation, http://www.apache.org/
+66  Benchmarking ec2-34-239-119-223.compute-1.amazonaws.com (be patient)
+67  Completed 5000 requests
+68  Completed 10000 requests
+69  Completed 15000 requests
+70  Completed 20000 requests
+71  Completed 25000 requests
+72  Completed 30000 requests
+73  Completed 35000 requests
+74  Completed 40000 requests
+75  Completed 45000 requests
+76  Completed 50000 requests
+77  Finished 50000 requests
+78  Server Software:        nginx/1.19.7
+79  Server Hostname:        ec2-34-239-119-223.compute-1.amazonaws.com
+80  Server Port:            31145
+81  Document Path:          /
+82  Document Length:        612 bytes
+83  Concurrency Level:      500
+84  Time taken for tests:   9.303 seconds
+85  Complete requests:      50000
+86  Failed requests:        0
+87  Total transferred:      42250000 bytes
+88  HTML transferred:       30600000 bytes
+89  Requests per second:    5374.45 [#/sec] (mean)
+90  Time per request:       93.033 [ms] (mean)
+91  Time per request:       0.186 [ms] (mean, across all concurrent requests)
+92  Transfer rate:          4434.97 [Kbytes/sec] received
+93  Connection Times (ms)
+94  Connect:        0    2   5.4      0      59
+95  Processing:    13   91  14.1     94     171
+96  Waiting:       12   90  13.6     94     164
+97  Total:         42   92  11.3     94     172
+98  Percentage of the requests served within a certain time (ms)
+99  kubectl describe hpa nginx
+100  kubectl delete hpa nginx
+101  kubectl edit deploy nginx
+102  KUBE_EDITOR="nano" kubectl edit deploy nginx
+103  kubectl autoscale deployment.apps/nginx --cpu-percent=10 --min=1 --max=5
+104  kubectl describe hpa nginx
+105  ubuntu@ip-172-31-93-182:~$ ab -n 50000 -r -c 500 http://ec2-34-239-119-223.compute-1.amazonaws.com:31145/
+106  ab -n 50000 -r -c 500 http://ec2-34-239-119-223.compute-1.amazonaws.com:31145/
+107  history > history.txt

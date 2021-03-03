@@ -19,6 +19,8 @@
           state: present
       - name: Install kubelet, kubeadm, kubernetes-cni
         apt: name=kubelet,kubeadm,kubernetes-cni state=latest
+      - name: Force reset kube
+        ansible.builtin.shell: kubeadm reset --force
       - name: Install docker
         apt: name=containerd state=latest
       - name: Force enable docker
@@ -85,8 +87,6 @@
     become: true
     gather_facts: False
     tasks:
-      - name: Force reset kube
-        ansible.builtin.shell: kubeadm reset --force
       - name: Execute join
         ansible.builtin.shell: "{{ hostvars['command_output_holder']['join_command'] }}"
   - hosts: k8master
