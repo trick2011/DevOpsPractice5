@@ -1,0 +1,12 @@
+- hosts: k8master
+  become: true
+  task:
+    - name: Install zip
+      apt: name=zip state=latest
+      become: yes
+    -
+- hosts: worker
+  become: true
+  task:
+    - name: Install x
+      apt: name=x state=latest

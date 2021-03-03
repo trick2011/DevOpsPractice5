@@ -1,0 +1,21 @@
+---
+  - hosts: all
+    become: true
+    gather_facts: False
+    tasks:
+      - name: Bootstrap a host without python2 installed
+        raw: test -e /usr/bin/python || (apt -y update && apt install -y python)
+      - name: Update apt-cache
+        apt: update_cache=yes
+      - name: Install docker.io apt-transport-https
+        apt: name=docker.io,apt-transport-https state=latest
+      - name: Add an Apt signing key, from google.
+        ansible.builtin.apt_key:
+          url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+          state: present
+      - name: Add kubernetes repository into sources list
+        ansible.builtin.apt_repository:
+          repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+          state: present
+      - name: Install kubelet, kubeadm, kubernetes-cni
+        apt: name=kubelet,kubeadm,kubernetes-cni state=latest
