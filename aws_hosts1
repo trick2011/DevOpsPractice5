@@ -1,20 +1,15 @@
-[aws-ubuntu]
+[webserver]
 # number_1
 ec2-54-174-91-27.compute-1.amazonaws.com
+[db]
 # number_2
 ec2-184-73-0-56.compute-1.amazonaws.com
-[aws-amazon]
 
-[aws:children]
-aws-ubuntu
-aws-amazon
+[cluster:children]
+webserver
+db
 
-[aws:vars]
+[cluster:vars]
 ansible_ssh_private_key_file=/home/tarick/.ssh/devopslab01.pem
 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-
-[aws-amazon:vars]
-ansible_ssh_user=ec2-user
-
-[aws-ubuntu:vars]
 ansible_ssh_user=ubuntu
